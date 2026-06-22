@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <link rel="stylesheet"  href="{{url_for('static', filename='css/styles.css')}}">
+</head>
+<body class="body-login">
+  <div class="form-container" id="form-container-l">
+    <form method="post" action="/sign-in" class="form login-form" id="form-login">
+      <h1>Create account</h1>
+      <label for="username">Enter your username or email</label> 
+      <input type="text" name="username" id="user-credential">
+      <label for="pass">Enter a password</label> 
+      <input type="text" name="pass" id="pass-l">
+      <button type="button" id="login">Sign In</button>
+    </form>
+  </div>
+  <script>
+    const user = document.getElementById('user-credential');
+    const password = document.getElementById('pass-l');
+       
+    document.getElementById('login').addEventListener("click", async (e) => {
+
+      if(password.value.length < 0){
+        alert("Ingrese su contrasenya");         }
+      if(user.value.length == 0){
+        alert("ingrese un nombre");
+      }
+
+      
+      const response = await fetch(`/sign-in`,{
+        method:"POST",
+        headers:{
+            "Content-Type":"application/json"
+        },
+        body: JSON.stringify({
+          "user":user.value,
+          "pass":password.value
+        })
+      });
+      
+      const data = await response.json();
+
+      if(data.success){
+        window.location.href = `/home`;
+      }else{
+        alert('errros');
+      }
+    
+
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register</title>
+  <link rel="stylesheet"  href="{{url_for('static', filename='css/styles.css')}}">
+</head>
+<body class="body-register">
+  <div class="form-container" id="form-container">
+    <form method="post" action="/register" class="form register-form" id="form-register">
+      <h1>Create account</h1>
+      <label for="username">Enter an username</label> 
+      <input type="text" name="username" id="username-r">
+      <label for="mail">Enter a mail</label> 
+      <input type="email" name="mail" id="mail-r">
+      <label for="pass">Enter a password</label> 
+      <input type="text" name="pass" id="pass-r">
+      <button type="button" id="register">Register</button>
+    </form>
+  </div>
+  <script>
+    const mail_field = document.getElementById('mail-r');
+    const username = document.getElementById('username-r');
+    const password = document.getElementById('pass-r');
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    
+
+    mail_field.addEventListener('input', () =>{
+      if(regex.test(mail_field.value)){
+        mail_field.style.color = "blue";
+      }else{
+         mail_field.style.color = "red";
+
+      }
+    });
+
+    
+    document.getElementById('register').addEventListener("click", async (e) => {
+
+      if(!regex.test(mail_field.value)){
+        alert("errormail");
+        return;
+      }
+      if(password.value.length < 8){
+        alert("agregue al menos 8 caracters");         }
+      if(username.value.length == 0){
+        alert("ingrese un nombre");
+      }
+
+      
+      const response = await fetch(`/register`,{
+        method:"POST",
+        headers:{
+            "Content-Type":"application/json"
+        },
+        body: JSON.stringify({
+          "username":username.value,
+          "mail":mail_field.value,
+          "pass":password.value
+        })
+      });
+      
+      const data = await response.json();
+
+      if(data.success){
+        window.location.href = `/register/verification`;
+      }else{
+        alert('errros');
+      }
+    
+
+    });
+  </script>
+</body>
+</html>

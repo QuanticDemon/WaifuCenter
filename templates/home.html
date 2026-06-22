@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Waifu Center</title>
+  <link rel="stylesheet"  href="{{url_for('static', filename='css/styles.css')}}">
+</head>
+<body>
+  <nav class="nav-bar">
+    <div class="letters">
+      <p class="p waifu">WAIFU</p>
+      <p class="p center">CENTΞR</p>
+    </div>
+    <div class="nav-right" id="">
+       
+        <ul class="nav-links">
+          <li class="dropdown">
+            <button id="add-waifu">Add Waifu</button>
+             <div id="add-waifu-menu" class="add-waifu-menu">
+            <ul>
+                <li id="mwc-op">My Waifu Center</li>
+                <li id="gwc-op">Global Waifu Center</li>
+            </ul>
+        </div>
+          </li>
+          <li>
+            <svg viewBox="0 0 512 512" version="1.1" xmlns="http://www.w3.org/2000/svg" fill="#FF007A !important"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path fill="#FF007A" d="M359.95,109.454c2.318,-3.552 5.085,-7.414 8.3,-11.588c3.667,-4.759 7.542,-9.518 11.625,-14.277c4.083,-4.76 8.875,-9.654 14.375,-14.682c5.5,-5.029 11.167,-9.609 17,-13.739c11.5,-8.262 21.458,-14.188 29.875,-17.78c8.417,-3.592 17.375,-5.388 26.875,-5.388c5,10.596 16.292,37.85 13.875,81.761c-1.602,29.106 -3.808,51.169 -6.618,66.191c23.322,28.824 36.743,64.918 36.743,108.048c0,136.039 -114.615,192 -256,192c-141.385,0 -256,-45.961 -256,-192c0,-43.13 13.421,-79.224 36.743,-108.048c-2.81,-15.022 -5.016,-37.085 -6.618,-66.191c-2.417,-43.911 8.875,-71.165 13.875,-81.761c9.5,0 18.458,1.796 26.875,5.388c8.417,3.592 18.375,9.518 29.875,17.78c5.833,4.13 11.5,8.71 17,13.739c5.5,5.029 10.292,9.922 14.375,14.682c4.083,4.759 7.958,9.518 11.625,14.278c3.215,4.173 5.982,8.035 8.3,11.587c31.765,-8.934 66.94,-13.454 103.95,-13.454c36.981,0 72.129,4.513 103.95,13.454Zm-199.95,226.546c-8.837,0 -16,7.163 -16,16c0,33.106 32.34,54 64,54c14.677,0 29.76,-2.434 41.774,-9.178c2.185,-1.227 4.27,-2.604 6.226,-4.128c1.956,1.524 4.041,2.901 6.226,4.128c12.014,6.744 27.097,9.178 41.774,9.178c31.66,0 64,-20.894 64,-54c0,-8.837 -7.163,-16 -16,-16c-8.837,0 -16,7.163 -16,16c0,8.868 -10.64,22 -32,22c-11.833,0 -20.75,-2.073 -26.108,-5.082c-4.524,-2.539 -5.892,-5.155 -5.892,-8.918c0,-8.837 -7.163,-16 -16,-16c-8.837,0 -16,7.163 -16,16c0,3.763 -1.368,6.379 -5.892,8.918c-5.358,3.009 -14.275,5.082 -26.108,5.082c-21.36,0 -32,-13.132 -32,-22c0,-8.837 -7.163,-16 -16,-16Zm16,-80c0,-17.673 -14.327,-32 -32,-32c-17.673,0 -32,14.327 -32,32c0,17.673 14.327,32 32,32c17.673,0 32,-14.327 32,-32Zm192,32c17.673,0 32,-14.327 32,-32c0,-17.673 -14.327,-32 -32,-32c-17.673,0 -32,14.327 -32,32c0,17.673 14.327,32 32,32Z"></path></g></svg>
+          </li>
+           <li>
+             <svg viewBox="0 0 17 17" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="#FF007A"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M8.516 0c-4.687 0-8.5 3.813-8.5 8.5s3.813 8.5 8.5 8.5 8.5-3.813 8.5-8.5-3.814-8.5-8.5-8.5zM1.041 9h2.937c0.044 1.024 0.211 2.031 0.513 3h-2.603c-0.481-0.906-0.776-1.923-0.847-3zM3.978 8h-2.937c0.071-1.077 0.366-2.094 0.847-3h2.6c-0.301 0.969-0.467 1.976-0.51 3zM5.547 5h5.896c0.33 0.965 0.522 1.972 0.569 3h-7.034c0.046-1.028 0.239-2.035 0.569-3zM4.978 9h7.035c-0.049 1.028-0.241 2.035-0.572 3h-5.891c-0.331-0.965-0.524-1.972-0.572-3zM13.013 9h2.978c-0.071 1.077-0.366 2.094-0.847 3h-2.644c0.302-0.969 0.469-1.976 0.513-3zM13.013 8c-0.043-1.024-0.209-2.031-0.51-3h2.641c0.48 0.906 0.775 1.923 0.847 3h-2.978zM14.502 4h-2.354c-0.392-0.955-0.916-1.858-1.55-2.7 1.578 0.457 2.938 1.42 3.904 2.7zM9.074 1.028c0.824 0.897 1.484 1.9 1.972 2.972h-5.102c0.487-1.071 1.146-2.073 1.97-2.97 0.199-0.015 0.398-0.030 0.602-0.030 0.188 0 0.373 0.015 0.558 0.028zM6.383 1.313c-0.629 0.838-1.151 1.737-1.54 2.687h-2.314c0.955-1.267 2.297-2.224 3.854-2.687zM2.529 13h2.317c0.391 0.951 0.915 1.851 1.547 2.689-1.561-0.461-2.907-1.419-3.864-2.689zM7.926 15.97c-0.826-0.897-1.488-1.899-1.978-2.97h5.094c-0.49 1.072-1.152 2.075-1.979 2.972-0.181 0.013-0.363 0.028-0.547 0.028-0.2 0-0.395-0.015-0.59-0.030zM10.587 15.703c0.636-0.842 1.164-1.747 1.557-2.703h2.358c-0.968 1.283-2.332 2.247-3.915 2.703z" fill="#FF007A&lt;svg viewBox=" 0="" 512="" 512"="" version="1.1" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path fill="#FF007A000000" d="M359.95,109.454c2.318,-3.552 5.085,-7.414 8.3,-11.588c3.667,-4.759 7.542,-9.518 11.625,-14.277c4.083,-4.76 8.875,-9.654 14.375,-14.682c5.5,-5.029 11.167,-9.609 17,-13.739c11.5,-8.262 21.458,-14.188 29.875,-17.78c8.417,-3.592 17.375,-5.388 26.875,-5.388c5,10.596 16.292,37.85 13.875,81.761c-1.602,29.106 -3.808,51.169 -6.618,66.191c23.322,28.824 36.743,64.918 36.743,108.048c0,136.039 -114.615,192 -256,192c-141.385,0 -256,-45.961 -256,-192c0,-43.13 13.421,-79.224 36.743,-108.048c-2.81,-15.022 -5.016,-37.085 -6.618,-66.191c-2.417,-43.911 8.875,-71.165 13.875,-81.761c9.5,0 18.458,1.796 26.875,5.388c8.417,3.592 18.375,9.518 29.875,17.78c5.833,4.13 11.5,8.71 17,13.739c5.5,5.029 10.292,9.922 14.375,14.682c4.083,4.759 7.958,9.518 11.625,14.278c3.215,4.173 5.982,8.035 8.3,11.587c31.765,-8.934 66.94,-13.454 103.95,-13.454c36.981,0 72.129,4.513 103.95,13.454Zm-199.95,226.546c-8.837,0 -16,7.163 -16,16c0,33.106 32.34,54 64,54c14.677,0 29.76,-2.434 41.774,-9.178c2.185,-1.227 4.27,-2.604 6.226,-4.128c1.956,1.524 4.041,2.901 6.226,4.128c12.014,6.744 27.097,9.178 41.774,9.178c31.66,0 64,-20.894 64,-54c0,-8.837 -7.163,-16 -16,-16c-8.837,0 -16,7.163 -16,16c0,8.868 -10.64,22 -32,22c-11.833,0 -20.75,-2.073 -26.108,-5.082c-4.524,-2.539 -5.892,-5.155 -5.892,-8.918c0,-8.837 -7.163,-16 -16,-16c-8.837,0 -16,7.163 -16,16c0,3.763 -1.368,6.379 -5.892,8.918c-5.358,3.009 -14.275,5.082 -26.108,5.082c-21.36,0 -32,-13.132 -32,-22c0,-8.837 -7.163,-16 -16,-16Zm16,-80c0,-17.673 -14.327,-32 -32,-32c-17.673,0 -32,14.327 -32,32c0,17.673 14.327,32 32,32c17.673,0 32,-14.327 32,-32Zm192,32c17.673,0 32,-14.327 32,-32c0,-17.673 -14.327,-32 -32,-32c-17.673,0 -32,14.327 -32,32c0,17.673 14.327,32 32,32Z"></path></g>"&gt;</path> </g></svg>
+           </li>
+           <li><svg fill="#FF007A" viewBox="0 -6 44 44" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid" stroke="#FF007A"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M42.001,32.000 L14.010,32.000 C12.908,32.000 12.010,31.104 12.010,30.001 L12.010,28.002 C12.010,27.636 12.211,27.300 12.532,27.124 L22.318,21.787 C19.040,18.242 19.004,13.227 19.004,12.995 L19.010,7.002 C19.010,6.946 19.015,6.891 19.024,6.837 C19.713,2.751 24.224,0.007 28.005,0.007 C28.006,0.007 28.008,0.007 28.009,0.007 C31.788,0.007 36.298,2.749 36.989,6.834 C36.998,6.889 37.003,6.945 37.003,7.000 L37.006,12.994 C37.006,13.225 36.970,18.240 33.693,21.785 L43.479,27.122 C43.800,27.298 44.000,27.634 44.000,28.000 L44.000,30.001 C44.000,31.104 43.103,32.000 42.001,32.000 ZM31.526,22.880 C31.233,22.720 31.039,22.425 31.008,22.093 C30.978,21.761 31.116,21.436 31.374,21.226 C34.971,18.310 35.007,13.048 35.007,12.995 L35.003,7.089 C34.441,4.089 30.883,2.005 28.005,2.005 C25.126,2.006 21.570,4.091 21.010,7.091 L21.004,12.997 C21.004,13.048 21.059,18.327 24.636,21.228 C24.895,21.438 25.033,21.763 25.002,22.095 C24.972,22.427 24.778,22.722 24.485,22.882 L14.010,28.596 L14.010,30.001 L41.999,30.001 L42.000,28.595 L31.526,22.880 ZM18.647,2.520 C17.764,2.177 16.848,1.997 15.995,1.997 C13.116,1.998 9.559,4.083 8.999,7.083 L8.993,12.989 C8.993,13.041 9.047,18.319 12.625,21.220 C12.884,21.430 13.022,21.755 12.992,22.087 C12.961,22.419 12.767,22.714 12.474,22.874 L1.999,28.588 L1.999,29.993 L8.998,29.993 C9.550,29.993 9.997,30.441 9.997,30.993 C9.997,31.545 9.550,31.993 8.998,31.993 L1.999,31.993 C0.897,31.993 -0.000,31.096 -0.000,29.993 L-0.000,27.994 C-0.000,27.629 0.200,27.292 0.521,27.117 L10.307,21.779 C7.030,18.234 6.993,13.219 6.993,12.988 L6.999,6.994 C6.999,6.939 7.004,6.883 7.013,6.829 C7.702,2.744 12.213,-0.000 15.995,-0.000 C15.999,-0.000 16.005,-0.000 16.010,-0.000 C17.101,-0.000 18.262,0.227 19.369,0.656 C19.885,0.856 20.140,1.435 19.941,1.949 C19.740,2.464 19.158,2.720 18.647,2.520 Z"></path> </g></svg></li>
+          <li>{{username}}</li>
+
+    </ul>
+
+    <div class="account-nav" id="account-nav">
+      {% if picture %}
+      <img src="{{url_for('static', filename='uploads_userpic/' + picture)}}" alt="">
+      {% endif %}
+       <div class="userprofile" id="userprofile">
+    <form method="post" id="changes_form" action="/profile-user/changes">
+      
+      <div class="account-nav" id="">
+        {% if picture %}
+        <img src="{{url_for('static', filename='uploads_userpic/'+ picture)}}" alt="">
+        {% endif %}
+
+             </div>
+
+         <div class="change-pic" id="change-pic">         <input type="file" name="" value="" id="change-pic-input">
+          <p>Change Photo</p>
+        </div>
+
+      <label for="" style="font-weight:900;">Username</label>
+      <input type="" name="" value="" required placeholder="{{username}}" disabled id="c_c_name">
+       <label for="" style="font-weight:900;">Email</label>
+      <input type="" name="" value="" required placeholder="{{mail}}" disabled id="c_c_mail">
+       <label for="" style="font-weight:900;">Password</label>
+      <input type="" name="" value="" required placeholder="It's a secret baka" disabled id="c_c_pass">
+      <div class="buttons-edit" id="buttons-edit">
+         <button type="button" id="edit-btn" class="edit-btn">Edit</button>
+         <button type="button" id="commit-changes" class="commit-changes">Commit Changes</button>
+
+        
+      </div>
+      <button type="button" id="logout-btn" class="logout-btn">Log Out</button>
+     
+
+      
+    </form>
+    
+  </div>
+
+    </div>
+    </div>
+
+  </nav>
+
+  <div class="waifu-container" id="waifu-container">
+    <div class="waifu-track" id="waifu-track">
+      {% for table in tables %}
+         <div class="slide">
+           <div class="slide-img" id="slide-img">
+             {% if table.image %}
+             <img src="{{url_for('static', filename='uploads_waifus_images/' + table.image)}}" alt="">
+             {% endif %}
+           </div>
+           <div class="slide-info" id="slide-info">
+             <h1>{{table.name}}</h1>
+             <p>{{table.description}}</p>
+           </div>
+         </div>
+      {% endfor %}
+    </div>
+    <button type="button" class="button btn-l" id="btn-l">L</button>
+    <button type="button" class="button btn-r" id="btn-r">R</button>
+    
+  </div>
+
+ 
+   <div class="add-waifu-form" id="add-waifu-form">
+    <div class="close-btn" id="close-btn">
+      <p>x</p>
+    </div>
+
+    <form id="waifu-form" class="waifu-form">
+      <h1>Waifu Data</h1>
+      <label for="name">Name</label>
+      <input type="text" id="waifu-name">
+      <label for="description">Description:</label>
+      <textarea rows="10" cols="10" id="waifu-description"></textarea>
+      <label for="image-waifu">Waifu Image</label>
+      <input type="file" id="waifu-file">
+      <img id="preview-waifu">
+      <button type="button" id="amw">Add My Waifu</button>
+    </form>
+  </div>
+
+   <script>
+    const waifu_name = document.getElementById('waifu-name');
+    const waifu_description = document.getElementById('waifu-description');
+    const image_waifu = document.getElementById('waifu-file');
+    const preview_waifu = document.getElementById('preview-waifu');
+    const waifu_form = document.getElementById('waifu-form');
+    const slides = document.querySelectorAll('.slide');
+    const picture_user = document.getElementById('change-pic-input');
+    const c_c_uname = document.getElementById('c_c_name');
+    const form_changes = document.getElementById('changes_form');
+    document.getElementById('c_c_name').disabled = true;
+     document.getElementById('c_c_mail').disabled = true;
+
+
+
+    
+
+    let toggle = false;
+    let toggle2 = false;
+    let index_slide = 0;
+    
+    document.getElementById('account-nav').addEventListener("click", ()=>{
+      toggle2 = !toggle2;
+      if(toggle2){
+        document.getElementById('userprofile').classList.add('active');
+      }else{
+         document.getElementById('userprofile').classList.remove('active');
+          document.getElementById('c_c_name').disabled = true;
+         document.getElementById('c_c_mail').disabled = true;
+
+
+
+
+
+      }
+    });
+
+
+
+    window.addEventListener('load', ()=> {
+      waifu_form.reset();
+      form_changes.reset();
+     
+    });
+    document.getElementById('add-waifu').addEventListener("click", ()=> {
+      toggle = !toggle;
+
+      if(toggle == true){
+          document.getElementById('add-waifu-menu').classList.add('active');
+
+      }
+      else{
+         document.getElementById('add-waifu-menu').classList.remove('active');
+
+      }
+        });
+    document.getElementById('mwc-op').addEventListener("click", ()=> {
+      document.getElementById('add-waifu-form').classList.add('active');
+    });
+
+    document.getElementById('close-btn').addEventListener("click", ()=> {
+      document.getElementById('add-waifu-form').classList.remove('active');
+    });
+
+    image_waifu.addEventListener("change",()=> {
+      const file = image_waifu.files[0];
+      if(!file){
+        return;
+      }
+
+      preview_waifu.src = URL.createObjectURL(file);
+    });
+
+    document.getElementById('amw').addEventListener("click", async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData;
+      formData.append("waifu-name",waifu_name.value);
+      formData.append("waifu-description",waifu_description.value);
+      if(image_waifu.files[0]){
+        formData.append("waifu-image",image_waifu.files[0]);
+      }
+    const response = await fetch(`/home/add-waifu`,{
+        method:"POST",
+        body: formData
+      });
+
+      const data = await response.json();
+
+      if(data.success){
+        window.location.reload();
+      }else{
+        console.log("error");
+      }
+    
+    });
+
+    function tp_slide(n_slide){
+       index_slide = (n_slide + slides.length) % slides.length;
+      document.getElementById('waifu-track').style.transform = `translateX(-${index_slide * 100}%)`;
+       
+    }
+
+    document.getElementById('btn-l').addEventListener("click", () =>{
+      tp_slide(index_slide - 1 );
+    });
+    document.getElementById('btn-r').addEventListener("click", () =>{
+      tp_slide(index_slide + 1 );
+    });
+
+
+    picture_user.addEventListener("change", async(e)=>{
+      e.preventDefault();
+      const userFormData = new FormData;
+
+      if (picture_user.files[0]){
+        userFormData.append("userpic", picture_user.files[0]);
+      }
+
+      const response = await fetch(`/profile-user/changes/userpic`,{
+        method:"POST",
+        body:userFormData
+      });
+
+      const data = await response.json();
+
+      if(data.success){
+        window.location.reload();
+      }
+      else{
+        console.log("error");
+      }
+
+
+    });
+  
+    document.getElementById('edit-btn').addEventListener("click",(e) => {
+      e.stopPropagation();
+      document.getElementById('c_c_name').removeAttribute("disabled");
+      document.getElementById('c_c_mail').removeAttribute("disabled");
+    });
+
+    document.getElementById('userprofile').addEventListener("click", (e) => {
+  e.stopPropagation();
+});
+    document.getElementById('logout-btn').addEventListener("click", () => {
+      window.location.href = '/logout';
+
+    });
+    document.getElementById('commit-changes').addEventListener("click", async (e)=>{
+      e.preventDefault();
+      const response = await fetch(`/profile-user/changes`, {
+        method:"POST",
+        headers:{
+          "Content-Type":"application/json"
+        },
+        body: JSON.stringify({
+          "new-name":document.getElementById('c_c_name').value,
+          "new-mail":document.getElementById('c_c_mail').value
+        })
+      });
+      const data = await response.json();
+
+      if(data.success){
+        window.location.reload();
+      }
+      else{
+        console.log("error");
+      }
+
+    });
+
+    
+
+ 
+
+  </script>
+</body>
+
+</html>

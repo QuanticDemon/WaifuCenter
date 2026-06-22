@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verification</title>
+  <link rel="stylesheet" href="{{url_for('static', filename='css/styles.css')}}">
+</head>
+<body class="body-v">
+  <div class="v-container" id="v-container">
+    <h1>Waifu Center Verification</h1>
+    <p>We send a mail to '{{temp_mail}}', please verify your mail</p>
+    <div class="inputs">
+        <input type="text" class="char-v" maxlength="1">
+     <input type="text" class="char-v" maxlength="1">
+ <input type="text" class="char-v" maxlength="1">
+ <input type="text" class="char-v" maxlength="1">
+ <input type="text" class="char-v" maxlength="1">
+ <input type="text" class="char-v" maxlength="1">
+
+
+    </div>
+  
+
+  </div>
+  <script>
+    const inputs = document.querySelectorAll('.char-v');
+
+    inputs.forEach((input, index) => {
+      input.addEventListener("input", ()=>{
+        if(input.value.length === 1 && inputs[index+1]){
+          inputs[index+1].focus();
+        }
+
+        
+      });
+      input.addEventListener("keydown", async (e) =>{
+        if(e.key === "Backspace"){
+          inputs[index-1].focus();
+          input.value = "";
+        }
+
+        
+          let code = "";
+
+          inputs.forEach(input => {
+            code +=input.value;
+          });
+
+          if(code.length===6){
+            const response = await fetch(`/register/verification`, {
+              method:"POST",
+              headers:{
+                "Content-Type":"application/json"
+              },
+              body: JSON.stringify({
+                "code":code
+              })
+            });
+
+            const data = await response.json();
+
+            if(data.success){
+              window.location.href = `/home`;
+            }
+            else{
+              console.log("error");
+            }
+          }
+        
+      });
+
+    
+
+    });
+  </script>
+</body>
+</html>

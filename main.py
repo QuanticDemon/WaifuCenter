@@ -1,0 +1,478 @@
+from flask import *
+from flask_sqlalchemy import SQLAlchemy
+import uuid
+import bcrypt
+import string
+import secrets
+from sqlalchemy import *
+from datetime import *
+import smtplib
+from email.message import EmailMessage
+import os
+app = Flask(__name__)
+app.secret_key = "ansdandoUAINXIAXSJALSNXASFMSKDFMKSDNFKSDNFKNJSNFSJDFN"
+
+
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///waifucenter.db"
+
+db = SQLAlchemy(app)
+
+def gen_token(value):
+
+    char = string.ascii_letters + string.digits + string.punctuation
+
+    tokenGen = ''.join(secrets.choice(char) for _ in range(value))
+
+    return tokenGen
+
+
+
+
+
+class Waifus(db.Model):
+    id_waifu = db.Column(
+            db.String(36),
+            primary_key = True,
+            default= lambda:str(uuid.uuid4())
+            )
+    name = db.Column(
+            db.String(200),
+            nullable = False
+            )
+    
+    description = db.Column(
+            db.Text,
+            nullable = True
+            )
+
+    image = db.Column(
+            db.String(500),
+            nullable= True
+            )
+
+    @classmethod
+    def create_waifu(cls, name, description, image):
+        NewWaifu = cls(
+                name = name,
+                description = description,
+                image = image
+                )
+
+        db.session.add(NewWaifu)
+        db.session.commit()
+        
+        return NewWaifu
+
+
+class Users(db.Model):
+    id_user = db.Column(
+            db.String(36),
+            primary_key = True,
+            default= lambda:str(uuid.uuid4())
+            )
+    username = db.Column(
+            db.String(200),
+            nullable = False
+            )
+    mail = db.Column(
+            db.String(200),
+            nullable = False,
+            unique = True
+            )
+    password = db.Column(
+            db.String(100),
+            nullable = False
+            )
+
+    user_pic = db.Column(
+            db.String(500),
+            nullable = True,
+            default = False
+            )
+    is_verified = db.Column(
+            db.Boolean,
+            nullable = False,
+            default = False
+            )
+
+
+    @classmethod
+    def create_account(cls, name, mail, password):      
+        pass_hashing_encode = password.encode('utf-8')
+        salts = bcrypt.gensalt(rounds=12)
+        hashing = bcrypt.hashpw(pass_hashing_encode, salts)
+        hashing_toString = hashing.decode('utf-8')
+
+
+        NewUser = cls(
+                username = name,
+                mail = mail,
+                password = hashing_toString
+                )
+
+        db.session.add(NewUser)
+        db.session.commit()
+
+        return NewUser
+
+    @classmethod
+    def sing_in_user(cls, userToken, password):
+        existed_user = cls.query.filter(
+                or_(cls.username == userToken, cls.mail==userToken)
+
+                ).first()
+        if not existed_user:
+            return False,None
+
+        try: 
+            pass_input = password.encode('utf-8')
+            pass_inDb = existed_user.password.encode('utf-8')
+            if bcrypt.checkpw(pass_input, pass_inDb):
+                return True, existed_user
+            else:
+                return False, None
+        except (ValueError, AttributeError, TypeError):
+            return False, None
+
+        return None
+
+    
+
+class Tokens(db.Model):
+    id_token = db.Column(
+            db.String(36),
+            primary_key = True,
+            default = lambda:str(uuid.uuid4())
+    )
+
+    token = db.Column(
+            db.String(6),
+            nullable = False,
+            default = lambda:gen_token(6)
+            )
+
+    type_token = db.Column(
+            db.String(100),
+            nullable = False
+            )
+
+    creation_datetime = db.Column(
+            db.DateTime,
+            nullable = False,
+            default=datetime.utcnow
+            )
+    expiration_datetime = db.Column(
+            db.DateTime,
+            nullable = True,
+            default = datetime.utcnow() + timedelta(minutes=15)
+            )
+
+    @classmethod
+    def create_token(cls, type_token):
+        NewToken = cls(
+                type_token = type_token
+                )
+
+        db.session.add(NewToken)
+        db.session.commit()
+
+        return NewToken
+
+class Bridge(db.Model):
+    id_bridge = db.Column(
+            db.String(36),
+            primary_key = True,
+            default=lambda:str(uuid.uuid4())
+
+    )
+
+    id_user = db.Column(
+            db.String(36),
+            db.ForeignKey('users.id_user'),
+            nullable = False
+    )
+
+    id_token = db.Column(
+            db.String(36),
+            db.ForeignKey('tokens.id_token'),
+            nullable = True
+            )
+
+    id_waifu = db.Column(
+            db.String(36),
+            db.ForeignKey('waifus.id_waifu'),
+            )
+
+
+    user = db.relationship('Users')
+    token = db.relationship('Tokens')
+    waifu = db.relationship('Waifus')
+    
+    @classmethod
+    def create_bridge_account(cls, id_user, id_token):
+        NewBridge = cls(
+                id_user = id_user,
+                id_token = id_token
+                )
+        db.session.add(NewBridge)
+        db.session.commit()
+
+        return NewBridge
+
+    @classmethod
+    def create_bridge_waifu(cls, id_user, id_waifu):
+        NewBridge = cls(
+                id_user = id_user,
+                id_waifu = id_waifu
+                )
+
+        db.session.add(NewBridge)
+        db.session.commit()
+
+        return NewBridge
+
+
+
+
+
+
+
+
+@app.context_processor
+def inject():
+    mail = session.get('mail')
+    username = session.get('username')
+    user_id = session.get('id')
+
+    user = Users.query.filter_by(id_user = user_id).first()
+
+    if not user:
+        return {}
+
+    return{
+            "mail":user.mail,
+            "username":user.username,
+            "id":user_id,
+            "picture":user.user_pic
+            }
+
+@app.route('/home', methods=["GET", "POST"])
+def home():
+  
+  if "id" not in session:
+    return redirect(url_for('login'))
+  
+  tables = (
+          Waifus.query.join(Bridge, Waifus.id_waifu == Bridge.id_waifu).filter(Bridge.id_user == session.get('id')).all()
+
+          )
+
+
+  return render_template("home.html", tables=tables) 
+@app.route('/register', methods=["GET", "POST"])
+def register_user():
+    session.clear()
+    if request.method == "POST":
+       data = request.get_json();
+       username = data.get('username')
+       mail = data.get('mail')
+       password = data.get('pass')
+
+       mail =mail.replace(" ","")
+       password = password.replace(" ","")
+       user = Users.create_account(username, mail, password)
+       
+       
+
+       if user:
+           token = Tokens.create_token('email_verification')
+           sender = EmailMessage()
+           sender['From'] = 'g2jyostin@gmail.com'
+           sender['To'] = user.mail
+           sender['Subject'] = "Verification Code Waifu Center"
+           sender.set_content(
+                f"Verification Code is: {token.token}"
+                   )
+           server_connex = smtplib.SMTP_SSL(
+                   "smtp.gmail.com",
+                   465
+                   )
+           server_connex.login(
+                   "g2jyostin@gmail.com",
+                   "xfqo kmjo vctz tras"
+                   )
+           server_connex.send_message(sender)
+           server_connex.quit()
+
+           bridge = Bridge.create_bridge_account(user.id_user, token.id_token)
+           
+           session['id'] = user.id_user
+           session['username'] = user.username
+           session['mail'] =user.mail
+            
+           return {
+                   "success":True
+                   }
+
+
+
+    return render_template('register.html')
+
+@app.route('/register/verification', methods=["GET", "POST"])
+def verification():
+    temp_mail = session.get('mail')
+    if request.method == "GET":
+         return render_template('verification.html', temp_mail = temp_mail)
+
+
+    
+    if request.method == "POST":
+        data = request.get_json()
+        code = data.get('code')
+        print("DATA:", data)
+        print("CODE:", code)
+
+        bridge = Bridge.query.filter_by(id_user = session.get('id')).first()
+        
+        if not bridge:
+             return {"success": False, "error": "bridge_not_found"}, 400
+        token = Tokens.query.filter_by(id_token = bridge.id_token).first()
+        user = Users.query.filter_by(id_user = session.get('id')).first()
+
+        if token and code == token.token:
+            user.is_verified = True
+            db.session.commit()
+            return {
+                    "success":True,
+
+
+                    }
+        else:
+            return {
+                    "success":False
+                    }
+
+@app.route('/sign-in', methods=["GET","POST"])
+def login():
+    session.clear()
+
+
+    if request.method == "POST":
+       data = request.get_json()
+
+       userToken = data.get('user')
+       password = data.get('pass')
+
+       verification,user = Users.sing_in_user(userToken, password)
+       if user and verification:
+           session['id'] = user.id_user
+           session['username'] = user.username
+           session['mail'] = user.mail
+           return {
+                   "success":True
+                   }
+       else:
+            return {
+                   "success":False
+                   }
+
+
+               
+
+
+
+    return render_template('login.html')
+
+@app.route('/home/add-waifu', methods=["POST"])
+def process_waifu_data():
+    
+    name_waifu = request.form.get('waifu-name')
+    description_waifu = request.form.get('waifu-description')
+    image_waifu = request.files.get('waifu-image')
+
+    if not image_waifu:
+        image_waifu = None
+    filename, extension = os.path.splitext(image_waifu.filename)
+    filename = str(uuid.uuid4()) + extension
+    path = os.path.join(upload_images, filename)
+    image_waifu.save(path)
+
+    waifu = Waifus.create_waifu(name_waifu, description_waifu, filename)
+
+    if waifu:
+        bridge = Bridge.create_bridge_waifu(session.get('id'), waifu.id_waifu)
+        return {
+                "success":True
+                }
+    else:
+         return {
+                "success":False
+                }
+
+    
+
+@app.route('/profile-user/changes/userpic', methods=["GET", "POST"])
+def change_picture():
+    if request.method == "POST":
+        image = request.files.get('userpic')
+
+       
+        filename, extension = os.path.splitext(image.filename)
+
+        filename = str(uuid.uuid4()) + extension
+
+        path = os.path.join(upload_images_user, filename)
+
+        image.save(path)
+
+        user = Users.query.filter_by(id_user = session.get('id')).first()
+
+        if not user:
+            return{
+                    "succces":False
+                    }
+
+        user.user_pic = filename
+        db.session.commit()
+        return{
+                "success":True
+                }
+
+
+@app.route('/logout', methods=["GET", "POST"])
+def logout():
+    session.clear()
+    return redirect(url_for('login'))
+
+
+@app.route('/profile-user/changes', methods=["GET", "POST"])
+def change_userdata():
+    data = request.get_json()
+    name = data.get('new-name')
+    mail = data.get('new-mail')
+    user = Users.query.filter_by(id_user = session.get('id')).first()
+    
+    if not user:
+        return {"success":False}
+
+    if name:
+        user.username = name
+        db.session.commit()
+    if mail:
+        user.mail = mail 
+        db.session.commit()
+    return {
+            "success":True
+            }
+
+if __name__ == "__main__":
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    upload_images = os.path.join(base_dir, "static", "uploads_waifus_images")
+    upload_images_user = os.path.join(base_dir, "static", "uploads_userpic")
+
+    os.makedirs(upload_images, exist_ok=True)
+    with app.app_context():
+        db.create_all()
+    app.run(debug=True)
+
+
