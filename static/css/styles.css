@@ -691,3 +691,104 @@ body{
   transition: all 0.5s ease;
 
 }
+.others-users, .solicitudes{
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  
+  height: max-content;
+  background-color: rgba(255,10,100,1);
+  justify-content: center;
+  position: relative;
+
+}
+
+.user{
+  display: flex;
+  background-color: white;
+  border: 1.5px rgba(255,10,100,1) solid;
+  color: rgba(255,10,100,1); 
+  width: 90%;
+  height: 80px;
+  position: relative  ;
+  margin-top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 12px;
+  align-items: center;
+  gap: 20px;
+
+}
+.user img{
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 1px rgba(255,10,100,1) solid;
+  margin-left: 12px;
+
+}
+
+
+.user .btns{
+ position: absolute;
+ right: 10px;
+}
+
+.user .btns button{
+  width: 80px;
+  height: 30px;
+  border-radius: 12px;
+  
+}
+.user .btns .del{
+  background-color: white;
+  color: rgba(255,10,100,1);
+  border:1px rgba(255,10,100,1) solid;
+  opacity: 0;
+  visibility: hidden;
+  position: absolute;
+}
+
+.user .btns .del.visible{
+  opacity: 1;
+  visibility: visible;
+  position: relative;
+}
+
+.user .btns .invite{
+  background-color: rgba(255,10,100,1);
+  color: white;
+  border: none;
+  opacity: 0;
+  visibility: hidden;
+  position: absolute;
+}
+
+.user .btns .invite.visible{
+  opacity: 1;
+  visibility: visible;
+  position: relative;
+}
+
+.user .btns .sended{
+ border:1px rgba(255,10,100,1) solid;
+ color: rgba(255,10,100,1);
+ background-color: white;
+ visibility: hidden;
+ opacity: 0;
+ position: absolute;
+}
+
+.user .btns .sended.visible{
+  opacity: 1;
+  visibility: visible;
+  position: absolute;
+  right: 10px;
+  top: -20px;
+}
+
+.bf{
+  width: 100%;
+  margin: 0;
+}
+

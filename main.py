@@ -136,6 +136,53 @@ class Users(db.Model):
 
         return None
 
+class Friendships(db.Model):
+    id_friendship = db.Column(
+            db.String(36),
+            primary_key = True,
+            default=lambda:str(uuid.uuid4())
+            )
+    id_mc = db.Column(
+            db.String(36),
+            db.ForeignKey('users.id_user'),
+            nullable = False
+
+            )
+    id_friend = db.Column(
+            db.String(36),
+            db.ForeignKey('users.id_user'),
+            nullable = False
+            )
+
+    fs_status = db.Column(
+            db.String(100),
+            nullable = False
+            )
+
+    @classmethod
+    def create_friendship(cls, id_mc, id_friend, status):
+    
+        
+        existed_friendship = cls.query.filter_by(
+                id_mc = session.get('id'),
+                id_friend = id_friend,
+                fs_status = "pending"
+                ).first()
+
+        if existed_friendship:
+            return redirect(url_for('friends'))
+
+
+        NewFriend = cls(
+                id_mc = id_mc,
+                id_friend = id_friend,
+                fs_status = status
+                )
+
+        db.session.add(NewFriend)
+        db.session.commit()
+        return NewFriend
+
     
 
 class Tokens(db.Model):
@@ -261,6 +308,7 @@ def home():
   
   if "id" not in session:
     return redirect(url_for('login'))
+
   
   tables = (
           Waifus.query.join(Bridge, Waifus.id_waifu == Bridge.id_waifu).filter(Bridge.id_user == session.get('id')).all()
@@ -409,7 +457,39 @@ def process_waifu_data():
                 "success":False
                 }
 
+
+@app.route('/home/friends', methods=["GET", "POST"])
+def friends():
+    if 'id' not in session:
+        return redirect(url_for('login'))
+
+    solicitudes = Friendships.query.all()
+    user_solicitudes = (Friendships.query.filter(Friendships.id_friend == session.get('id'), Friendships.fs_status == "pending").join(Users, Friendships.id_mc ==Users.id_user).add_entity(Users).all())
+
+    user_solicitudes_enviadas = (Friendships.query.filter(Friendships.id_mc == session.get('id'), Friendships.fs_status == "pending").join(Users, Friendships.id_friend == Users.id_user).add_entity(Users).all())
+        
+    all_users = Users.query.all()
+    users_show = []
+    users_ids = []
+
+
     
+    for user in all_users:
+        if user.id_user != session.get('id'):
+            users_show.append({
+                "id":user.id_user,
+                "pic":user.user_pic,
+                "username":user.username
+                })
+        if user.id_user not in user_solicitudes and user.id_user not in user_solicitudes_enviadas:
+            users_ids.append(user.id_user)
+
+
+
+    
+
+
+    return render_template('friends.html', users= users_show, user_solicitudes = user_solicitudes, user_solicitudes_enviadas = user_solicitudes_enviadas, users_ids = users_ids)
 
 @app.route('/profile-user/changes/userpic', methods=["GET", "POST"])
 def change_picture():
@@ -464,6 +544,26 @@ def change_userdata():
     return {
             "success":True
             }
+
+@app.route('/fs-manager', methods=["POST", "GET"])
+def fs_manager():
+    data = request.get_json()
+    if data is None:
+        return None
+    id_user = session.get('id')
+    type_sol = data.get('type_solicitude')
+    id_friend = data.get('id_friend')
+
+    if type_sol == 'pending':
+        newFS = Friendships.create_friendship(id_user, id_friend, type_sol)
+        if not newFS:
+                return{
+                        "success":False
+                        }
+    return{
+            "success":True
+            }
+
 
 if __name__ == "__main__":
     base_dir = os.path.dirname(os.path.abspath(__file__))

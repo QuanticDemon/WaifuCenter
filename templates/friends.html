@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Friends</title>
+  <link rel="stylesheet" href="{{url_for('static', filename='css/styles.css')}}">
+</head>
+<body class="bf">
+  <h1>Friends</h1>
+
+
+
+  <p>{{username}}</p>
+
+  <h1>Solicitudes</h1>
+  <div class="solicitudes" id="solicitudes">
+    {% for friend, user in user_solicitudes %}
+    <div id="user-s" class="user">
+      <img src="{{url_for('static', filename='uploads_userpic/'+user.user_pic)}}" alt="">
+      <p>{{user.username}}</p>
+      <p>{{friend.fs_status}}</p>
+
+    </div>
+
+    {% endfor %}
+  </div>
+
+  <h1>Solicitudes Enviadas:</h1>
+
+  <div class="solicitudes">
+     {% for friendship, user in user_solicitudes_enviadas%}
+        
+        <div id="user-mc" class="user">
+          <img src="{{url_for('static', filename='uploads_userpic/'+user.user_pic)}}" alt="">
+          <p>{{user.username}}</p>
+          <p>{{friendship.fs_status}}</p>
+          
+        </div>
+      
+     {% endfor %}
+    
+  </div>
+  
+
+  <h1>Others Users</h1>
+  <div class="others-users" id="others-users">
+  {% for user in users%}
+      
+      <div class="user" id="user">
+        <img src="{{url_for('static', filename='uploads_userpic/' + user.pic)}}" alt="">
+        <p>{{user.username}}</p>
+        <div class="btns">
+          <form action='/fs-manager' method="post">
+            
+          {% if user.id_user not in users_ids %}
+          <button type="button" class="del visible" id="del">
+            Delete
+          </button>
+          <button type="button" id="invite" value="{{user.id}}" class="invite visible">
+            Add
+          </button>
+          <button type="button" class="sended" id="sended">Cancel</button>
+          {% else %}
+            
+            <button type="button" class="sended visible" id="sended-2">Cancel</button>
+          {% endif%}
+          </form>
+        
+        </div>
+      </div>
+  {%endfor%}
+  </div>
+  <script>
+    const del_btn = document.getElementById('del');
+    const invite_btn = document.getElementById('invite');
+    const sended_btn = document.getElementById('sended');
+
+
+    invite_btn.addEventListener("click", async (e)=>{
+      e.preventDefault();
+
+      const response = await fetch(`/fs-manager`, {
+        method:"POST",
+        headers:{
+          "Content-Type":"application/json"
+        },
+        body: JSON.stringify({
+          "type_solicitude":"pending",
+          "id_friend":invite_btn.value
+        })
+      });
+      
+      const data = await response.json();
+
+      if(data.success){
+        del_btn.classList.remove('visible');
+        invite_btn.classList.remove('visible');
+        sended_btn.classList.add('visible');
+      }else{
+        console.log('error');
+      }
+
+
+    });
+    sended_btn.addEventListener("click", (e)=> {
+      e.preventDefault();
+      del_btn.classList.add('visible');
+      invite_btn.classList.add('visible');
+      sended_btn.classList.remove('visible');
+    });
+  </script>
+</body>
+</html>
