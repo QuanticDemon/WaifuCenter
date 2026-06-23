@@ -738,6 +738,7 @@ body{
   width: 80px;
   height: 30px;
   border-radius: 12px;
+  cursor: pointer;
   
 }
 .user .btns .del{
@@ -747,6 +748,12 @@ body{
   opacity: 0;
   visibility: hidden;
   position: absolute;
+  transition: all 0.5s ease;
+}
+
+.user .btns button:hover{
+  transform: translateY(-5px);
+
 }
 
 .user .btns .del.visible{
@@ -762,6 +769,11 @@ body{
   opacity: 0;
   visibility: hidden;
   position: absolute;
+  transition: all 0.5s ease;
+}
+
+.user .btns .invite:hover{
+  background-color: rgba(255,20,150,1);
 }
 
 .user .btns .invite.visible{
@@ -790,5 +802,117 @@ body{
 .bf{
   width: 100%;
   margin: 0;
+  background-color: rgba(255,10,100,1);
+}
+.accept{
+  width: 100px;
+  height: 40px;
+  background-color: rgba(255,10,90,1);
+  border-radius: 15px;
+  color: white;
+  border: none;
+  text-align: center;
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  right: 15px;
+  cursor: pointer;
+  transition: all 0.5s ease;
+
 }
 
+.accept:hover{
+  background-color: rgba(255,20,120,1);
+  transform: translateY(-5px);
+}
+.bf h1{
+  display: flex;
+  margin-left: 30px;
+  margin-top: 12px;
+  font-family: fantasy;
+}
+
+.solicitudes_sending.up {
+  display: flex;
+  position: relative;
+  
+  left: 50%;
+  transform: translateX(-50%);
+  align-items: center;
+  background-color: white;
+  border:2px rgba(255,10,90,1) solid;
+  color: rgba(255,10,90,1);
+  width: 90%;
+  margin-top: 20px;
+  border-radius: 15px;
+
+}
+
+.solicitudes_env{
+       position: absolute;
+    opacity: 0;
+    visibility: hidden;
+
+}
+
+.solicitudes_env.hide{
+  position: relative;
+  opacity: 1;
+  visibility: visible;
+      
+
+}
+.solicitudes_sending .svg{
+  width: 50px;
+  height: 50px;
+  position: absolute;
+  right: 10px;
+  top: 70%;
+  transform: translateY(-70%) ;
+  cursor: pointer;
+
+}
+.solicitudes_sending .svg svg{
+ transition: all 0.5s ease;
+
+}
+
+
+.solicitudes_sending .svg:hover svg{
+  transform: rotate(90deg);
+}
+
+.bf .nav-bar{
+  width: 100%;
+  background-color: white;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  position: fixed;
+  gap: 30px;
+}
+
+.bf .nav-bar svg path{
+  stroke: rgba(255,10,90,1);
+ 
+}
+
+.bf .nav-bar .nav-links{
+   position: absolute;
+   margin-right: 20px;
+  right: 20px;
+
+}
+
+.bf .nav-bar img{
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 2px rgba(255,10,90,1) solid;
+  
+}

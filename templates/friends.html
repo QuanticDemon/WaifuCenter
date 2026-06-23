@@ -7,11 +7,45 @@
   <link rel="stylesheet" href="{{url_for('static', filename='css/styles.css')}}">
 </head>
 <body class="bf">
+  <nav class="nav-bar">
+    <ul class="nav-links" id="">
+      <li id="goHome"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g id="Navigation / House_01"> <path id="Vector" d="M20 17.0002V11.4522C20 10.9179 19.9995 10.6506 19.9346 10.4019C19.877 10.1816 19.7825 9.97307 19.6546 9.78464C19.5102 9.57201 19.3096 9.39569 18.9074 9.04383L14.1074 4.84383C13.3608 4.19054 12.9875 3.86406 12.5674 3.73982C12.1972 3.63035 11.8026 3.63035 11.4324 3.73982C11.0126 3.86397 10.6398 4.19014 9.89436 4.84244L5.09277 9.04383C4.69064 9.39569 4.49004 9.57201 4.3457 9.78464C4.21779 9.97307 4.12255 10.1816 4.06497 10.4019C4 10.6506 4 10.9179 4 11.4522V17.0002C4 17.932 4 18.3978 4.15224 18.7654C4.35523 19.2554 4.74432 19.6452 5.23438 19.8482C5.60192 20.0005 6.06786 20.0005 6.99974 20.0005C7.93163 20.0005 8.39808 20.0005 8.76562 19.8482C9.25568 19.6452 9.64467 19.2555 9.84766 18.7654C9.9999 18.3979 10 17.932 10 17.0001V16.0001C10 14.8955 10.8954 14.0001 12 14.0001C13.1046 14.0001 14 14.8955 14 16.0001V17.0001C14 17.932 14 18.3979 14.1522 18.7654C14.3552 19.2555 14.7443 19.6452 15.2344 19.8482C15.6019 20.0005 16.0679 20.0005 16.9997 20.0005C17.9316 20.0005 18.3981 20.0005 18.7656 19.8482C19.2557 19.6452 19.6447 19.2554 19.8477 18.7654C19.9999 18.3978 20 17.932 20 17.0002Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g> </g></svg></li>
+      <li></li>
+      
+    </ul>
+    <div class="acc">
+      <img src="{{url_for('static', filename='uploads_userpic/'+picture)}}" alt="">
+    </div>
+    
+  </nav>
+
   <h1>Friends</h1>
+  <div class="friends" id="friends">
+    {% for friends, user in friends_user %}
+      <div class="user">
+        <img src="{{url_for('static', filename='uploads_userpic/'+ user.user_pic)}}" alt="">
+        <p>{{user.username}}</p>
+        <p>{{friends.fs_status}}</p>
+      </div>
+    {% endfor %}
+    
+  </div>
+
+  
+  <div class="friends" id="friends">
+    {% for friends, user in friends_friends %}
+      <div class="user">
+        <img src="{{url_for('static', filename='uploads_userpic/'+ user.user_pic)}}" alt="">
+        <p>{{user.username}}</p>
+        <p>{{friends.fs_status}}</p>
+      </div>
+    {% endfor %}
+    
+  </div>
 
 
 
-  <p>{{username}}</p>
+
 
   <h1>Solicitudes</h1>
   <div class="solicitudes" id="solicitudes">
@@ -20,15 +54,22 @@
       <img src="{{url_for('static', filename='uploads_userpic/'+user.user_pic)}}" alt="">
       <p>{{user.username}}</p>
       <p>{{friend.fs_status}}</p>
-
+      <button type="button" value="{{user.id_user}}" class="accept" id="accept">
+        <p>Accept</p>
+        
+      </button>
     </div>
 
     {% endfor %}
   </div>
-
-  <h1>Solicitudes Enviadas:</h1>
-
-  <div class="solicitudes">
+  <div class="solicitudes_sending" id="solicitudes_sending">
+     <h1>Solicitudes Enviadas:</h1>
+     <div class="svg" >
+      <svg id='show-sol-history-active'  viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M5 6H19V7.5H5V6Z" fill="rgba(255,10,90,1)"></path> <path d="M5 13H19V14.5H5V13Z" fill="rgba(255,10,90,1)"></path> <path d="M11 16.5H19V18H11V16.5Z" fill="rgba(255,10,90,1)"></path> <path d="M5 9.5H19V11H5V9.5Z" fill="rgba(255,10,90,1)"></path> </g></svg>
+     </div>
+  </div>
+ 
+  <div class="solicitudes solicitudes_env" id="solicitudes_env">
      {% for friendship, user in user_solicitudes_enviadas%}
         
         <div id="user-mc" class="user">
@@ -42,9 +83,9 @@
     
   </div>
   
+<h1>Others Users</h1>
+<div class="others-users" id="others-users">
 
-  <h1>Others Users</h1>
-  <div class="others-users" id="others-users">
   {% for user in users%}
       
       <div class="user" id="user">
@@ -53,62 +94,155 @@
         <div class="btns">
           <form action='/fs-manager' method="post">
             
-          {% if user.id_user not in users_ids %}
+          {% if user['id'] not in users_ids_env %}
           <button type="button" class="del visible" id="del">
             Delete
           </button>
           <button type="button" id="invite" value="{{user.id}}" class="invite visible">
             Add
           </button>
-          <button type="button" class="sended" id="sended">Cancel</button>
+          <button type="button" value="{{user.id}}" class="sended" id="sended">Cancel</button>
           {% else %}
+          <button type="button" class="del" id="del">
+            Delete
+          </button>
+          <button type="button" id="invite" value="{{user.id}}" class="invite">
+            Add
+          </button>
+
             
-            <button type="button" class="sended visible" id="sended-2">Cancel</button>
-          {% endif%}
+          <button type="button" class="sended visible" id="sended-2" value="{{user.id}}">Cancel</button>
+          {% endif %}
           </form>
         
         </div>
       </div>
-  {%endfor%}
+  {% endfor %}
   </div>
   <script>
-    const del_btn = document.getElementById('del');
-    const invite_btn = document.getElementById('invite');
-    const sended_btn = document.getElementById('sended');
+    
+    const invite_btn = document.querySelectorAll('.invite');
+const sended_btn = document.querySelectorAll('.sended');
 
+const cancel = document.querySelectorAll('.sended');
 
-    invite_btn.addEventListener("click", async (e)=>{
-      e.preventDefault();
+const solicitudes_sending = document.getElementById('solicitudes_sending');
+const solicitudes_env =  document.getElementById('solicitudes_env');
+const accept_btn = document.querySelectorAll('.accept');
+let toggle_sol_env = false;
+document.getElementById('goHome').addEventListener("click",()=>{
+  window.location.href=`/home`;
+});
 
-      const response = await fetch(`/fs-manager`, {
-        method:"POST",
-        headers:{
-          "Content-Type":"application/json"
-        },
-        body: JSON.stringify({
-          "type_solicitude":"pending",
-          "id_friend":invite_btn.value
-        })
+    accept_btn.forEach((accept) => {
+      accept.addEventListener("click", async (e)=>{
+        e.preventDefault();
+
+        const response = await fetch(`/fs-manager`, {
+          method:"POST",
+          headers:{
+            "Content-Type":"application/json"
+          },
+          body: JSON.stringify({
+            "type_solicitude":"accept",
+            "id_friend":accept.value
+          })
+        });
+        const data = await response.json();
+
+        if(data.success){
+          window.location.reload();
+        }
+        else{
+          console.log("error");
+        }
+
       });
-      
-      const data = await response.json();
-
-      if(data.success){
-        del_btn.classList.remove('visible');
-        invite_btn.classList.remove('visible');
-        sended_btn.classList.add('visible');
-      }else{
-        console.log('error');
-      }
-
-
     });
-    sended_btn.addEventListener("click", (e)=> {
-      e.preventDefault();
-      del_btn.classList.add('visible');
-      invite_btn.classList.add('visible');
-      sended_btn.classList.remove('visible');
+    cancel.forEach((cancel_u) =>{
+      cancel_u.addEventListener("click", async (e)=>{
+        e.preventDefault();
+        const response = await fetch(`/fs-manager`,{
+          method:"POST",
+          headers:{
+            "Content-Type":"application/json"
+          },
+          body: JSON.stringify({
+            "type_solicitude":"cancel",
+            "id_friend":cancel_u.value
+          })
+        });
+        const data = await response.json();
+        if(data.success){
+          window.location.reload();
+        }
+        else{
+          console.log('error');
+        }
+      });
     });
+
+
+solicitudes_env.classList.remove('hide');
+solicitudes_sending.classList.add('up');
+
+// EVENTO: AGREGAR AMIGO
+invite_btn.forEach((invite) => {
+  invite.addEventListener("click", async (e) => {
+    e.preventDefault();
+
+    // Buscamos la tarjeta (.user) contenedora de ESTE botón específico
+    const userCard = e.target.closest('.user');
+    // Buscamos los otros botones específicos de ESTA tarjeta
+    const localDelBtn = userCard.querySelector('.del');
+    const localSendedBtn = userCard.querySelector('.sended');
+
+    const response = await fetch(`/fs-manager`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        "type_solicitude": "pending",
+        "id_friend": invite.value
+      })
+    });
+    
+    const data = await response.json();
+
+    if (data.success) {
+      // Modificamos ÚNICAMENTE los elementos de esta tarjeta
+      if (localDelBtn) localDelBtn.classList.remove('visible');
+      invite.classList.remove('visible'); // Oculta solo este botón 'Add'
+      if (localSendedBtn) localSendedBtn.classList.add('visible');
+    } else {
+      console.log('error');
+    }
+  });
+});
+
+// EVENTO: CANCELAR SOLICITUD
+sended_btn.forEach((cancel) => {
+  cancel.addEventListener('click', (e) => {
+    // Buscamos la tarjeta contenedora del botón 'Cancel' clickeado
+    const userCard = e.target.closest('.user');
+    const localDelBtn = userCard.querySelector('.del');
+    const localInviteBtn = userCard.querySelector('.invite');
+
+    // Modificamos solo los componentes locales de la tarjeta
+    if (localDelBtn) localDelBtn.classList.add('visible');
+    if (localInviteBtn) localInviteBtn.classList.add('visible');
+    cancel.classList.remove('visible'); // Oculta este botón 'Cancel'
+  });
+});
+
+
+document.getElementById('show-sol-history-active').addEventListener("click", () => {
+  toggle_sol_env = !toggle_sol_env;
+  if (toggle_sol_env) {
+    solicitudes_env.classList.add('hide');
+  } else {
+    solicitudes_env.classList.remove('hide');
+  }
+});
   </script>
 </body>
 </html>

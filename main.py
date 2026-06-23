@@ -183,6 +183,23 @@ class Friendships(db.Model):
         db.session.commit()
         return NewFriend
 
+    @classmethod
+    def del_fs(cls, id_mc, id_friend):
+        del_fs_query = cls.query.filter(
+                cls.id_mc == id_mc,
+                cls.id_friend == id_friend
+                ).first()
+
+        if not del_fs_query:
+            return False
+
+        db.session.delete(del_fs_query)
+        db.session.commit()
+
+        return True
+
+        
+
     
 
 class Tokens(db.Model):
@@ -463,14 +480,23 @@ def friends():
     if 'id' not in session:
         return redirect(url_for('login'))
 
+    my_id=session.get('id')
     solicitudes = Friendships.query.all()
-    user_solicitudes = (Friendships.query.filter(Friendships.id_friend == session.get('id'), Friendships.fs_status == "pending").join(Users, Friendships.id_mc ==Users.id_user).add_entity(Users).all())
+    user_solicitudes = (Friendships.query.filter(Friendships.id_friend == my_id, Friendships.fs_status == "pending").join(Users, Friendships.id_mc ==Users.id_user).add_entity(Users).all())
 
     user_solicitudes_enviadas = (Friendships.query.filter(Friendships.id_mc == session.get('id'), Friendships.fs_status == "pending").join(Users, Friendships.id_friend == Users.id_user).add_entity(Users).all())
         
+    enviadas_raw = Friendships.query.filter_by(id_mc=my_id, fs_status="pending").all()
     all_users = Users.query.all()
     users_show = []
-    users_ids = []
+    users_ids_env = [friend.id_friend for friend in enviadas_raw]
+
+
+    friends_user = (Friendships.query.filter(        Friendships.id_friend == my_id, Friendships.fs_status=="friends"
+        ).join(Users, Friendships.id_mc == Users.id_user).add_entity(Users).all())
+
+    friends_friends =  (Friendships.query.filter(        Friendships.id_mc == my_id, Friendships.fs_status=="friends"
+        ).join(Users, Friendships.id_friend == Users.id_user).add_entity(Users).all())
 
 
     
@@ -481,15 +507,13 @@ def friends():
                 "pic":user.user_pic,
                 "username":user.username
                 })
-        if user.id_user not in user_solicitudes and user.id_user not in user_solicitudes_enviadas:
-            users_ids.append(user.id_user)
 
-
+      
 
     
 
 
-    return render_template('friends.html', users= users_show, user_solicitudes = user_solicitudes, user_solicitudes_enviadas = user_solicitudes_enviadas, users_ids = users_ids)
+    return render_template('friends.html', users= users_show, user_solicitudes = user_solicitudes, user_solicitudes_enviadas = user_solicitudes_enviadas, users_ids_env = users_ids_env, friends_user = friends_user, friends_friends = friends_friends)
 
 @app.route('/profile-user/changes/userpic', methods=["GET", "POST"])
 def change_picture():
@@ -560,6 +584,24 @@ def fs_manager():
                 return{
                         "success":False
                         }
+    if type_sol == 'cancel':
+        cancelSol = Friendships.del_fs(id_user, id_friend).first()
+
+        if not cancelSol:
+            return{
+                    "succes":False
+                    }
+
+    if type_sol == 'accept':
+        acceptSol = Friendships.query.filter(Friendships.id_mc == id_friend, Friendships.id_friend == id_user).first()
+
+        if not acceptSol:
+            return{
+                    "success":False
+                    }
+
+        acceptSol.fs_status = "friends"
+        db.session.commit()
     return{
             "success":True
             }
