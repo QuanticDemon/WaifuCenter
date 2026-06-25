@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title></title>
+</head>
+<body>
+   {% for chat in chat_user %}
+   <p>{{chat.id_friend}}</p>
+   {% endfor %}
+
+   {% for friend_chat, user_chat in chats_user %}
+   <img src="{{url_for('static', filename='uploads_userpic/')+ user_chat.user_pic}}" alt="">
+    <p>{{user_chat.username}}</p>
+    <p>{{friend_chat.status}}</p>
+  {% endfor %}
+
+</body>
+</html>

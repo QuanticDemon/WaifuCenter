@@ -200,7 +200,7 @@ class Friendships(db.Model):
 
         
 
-    
+
 
 class Tokens(db.Model):
     id_token = db.Column(
@@ -241,6 +241,91 @@ class Tokens(db.Model):
         db.session.commit()
 
         return NewToken
+
+class Messages(db.Model):
+    id_message = db.Column(
+            db.String(36),
+            primary_key = True,
+            default=lambda:str(uuid.uuid4())
+
+            )
+    id_emisor = db.Column(
+            db.String(36),
+            
+            )
+    id_receptor = db.Column(
+            db.String(36)
+            )
+
+    text_content = db.Column(
+            db.Text,
+            nullable = False
+            )
+    send_date = db.Column(
+            db.DateTime,
+            nullable = False,
+            default = datetime.utcnow
+            )
+
+    @classmethod
+    def send(cls, id_emisor, id_receptor, content):
+
+        new_message = cls(
+                id_emisor = id_emisor,
+                id_receptor = id_receptor,
+                text_content = content
+                )
+
+        db.session.add(new_message)
+        db.session.commit()
+
+        return new_message
+
+class Chats(db.Model):
+    id_chat= db.Column(
+            db.String(36),
+            primary_key=True,
+            default=lambda:str(uuid.uuid4())
+            )
+
+    id_user = db.Column(
+            db.String(36),
+            db.ForeignKey('messages.id_emisor'),
+            nullable=False
+            )
+    id_friend = db.Column(
+            db.String(36),
+            db.ForeignKey('messages.id_receptor'),
+            nullable=False
+            )
+    id_message = db.Column(
+            db.String(36),
+            db.ForeignKey('messages.id_message'),
+            )
+
+    status = db.Column(
+            db.String(100),
+            nullable=False
+            )
+
+    @classmethod
+    def new_chat(cls, id_user, id_friend):
+        existed_chat = cls.query.filter_by(id_user = id_user, id_friend = id_friend).first()
+
+        if existed_chat:
+            return redirect(url_for('priv_chat', chat_id_friend=id_friend))
+
+        NewChat = cls(
+                id_user = id_user,
+                id_friend = id_friend,
+                status = "Active"
+                )
+        db.session.add(NewChat)
+        db.session.commit()
+
+        return NewChat
+
+        
 
 class Bridge(db.Model):
     id_bridge = db.Column(
@@ -420,7 +505,7 @@ def verification():
 @app.route('/sign-in', methods=["GET","POST"])
 def login():
     session.clear()
-
+    
 
     if request.method == "POST":
        data = request.get_json()
@@ -478,7 +563,10 @@ def process_waifu_data():
 @app.route('/home/friends', methods=["GET", "POST"])
 def friends():
     if 'id' not in session:
+        active = False
         return redirect(url_for('login'))
+
+    active = True
 
     my_id=session.get('id')
     solicitudes = Friendships.query.all()
@@ -513,7 +601,7 @@ def friends():
     
 
 
-    return render_template('friends.html', users= users_show, user_solicitudes = user_solicitudes, user_solicitudes_enviadas = user_solicitudes_enviadas, users_ids_env = users_ids_env, friends_user = friends_user, friends_friends = friends_friends)
+    return render_template('friends.html', users= users_show, user_solicitudes = user_solicitudes, user_solicitudes_enviadas = user_solicitudes_enviadas, users_ids_env = users_ids_env, friends_user = friends_user, friends_friends = friends_friends, active = active)
 
 @app.route('/profile-user/changes/userpic', methods=["GET", "POST"])
 def change_picture():
@@ -605,7 +693,49 @@ def fs_manager():
     return{
             "success":True
             }
+@app.route('/home/friends/c/<chat_id_friend>', methods=["GET", "POST"])
+def priv_chat(chat_id_friend):
 
+    if 'id' not in session:
+        return redirect(url_for('login'))
+    friend = Users.query.filter_by(id_user = chat_id_friend).first()
+    user = Users.query.filter_by(id_user=session.get('id')).first()
+    if not friend:
+        return {}
+    if not user: 
+        return {}
+    if request.method == "GET":
+         return render_template('chats.html', chat_id_friend=chat_id_friend, friend = friend, user = user)
+    data = request.get_json()
+
+    from_ms = data.get('from')
+    message = data.get('message')
+
+    save_send_message = Messages.send(from_ms, chat_id_friend, message)
+
+    if save_send_message:
+        new_chatt = Chats.new_chat(save_send_message.id_emisor, save_send_message.id_receptor)
+        return {
+                "success":True,
+                "message": save_send_message.text_content,
+                "date":save_send_message.send_date
+                }
+    else:
+        return{
+                "success":False
+                }
+
+
+@app.route('/home/friends/c', methods=["POST", "GET"])
+def chat_menu():
+    if 'id' not in session:
+        return redirect(url_for('login'))
+    user_id = session.get('id')
+    chat_user = Chats.query.filter_by(id_user=user_id).all()
+    chats_user = (Chats.query.filter(Chats.id_user==user_id, Chats.status == "Active").join(Users, Chats.id_friend == Users.id_user).add_entity(Users).all())
+    if not chat_user:
+        return {}
+    return render_template('chatmenu.html', chat_user= chat_user, chats_user = chats_user)
 
 if __name__ == "__main__":
     base_dir = os.path.dirname(os.path.abspath(__file__))

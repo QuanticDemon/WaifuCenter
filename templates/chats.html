@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="{{url_for('static', filename='css/styles.css')}}">
+</head>
+<body>
+   <p>{{chat_id_friend}}</p>
+   <nav class="nav-bar-chat">
+      <div class="user-info">
+        <img src="{{url_for('static', filename='uploads_userpic/'+friend.user_pic)}}" alt="">
+        <p>{{friend.username}}</p>
+
+      </div>
+      <div class="chat-ops" id="">
+        <ul>
+          <li>Phone</li>
+          <li>Block</li>
+          <li>:</li>
+        </ul>
+        
+      </div>
+
+    
+   </nav>
+
+   <div class="chat-body" id="chat-body">
+      
+   </div>
+
+   <div class="user-input" id="">
+
+     <button type="" class="add">+</button>
+     <input type="text" name="" id='message' placeholder="{{user.username}}">
+     <button type="" class="send" id="send"value="{{user.id_user}}">Send</button>
+    
+   </div>
+   <script>
+    const send_btn = document.getElementById('send');
+    const message = document.getElementById('message');
+    const chat_body = document.getElementById('chat-body');
+
+    send_btn.addEventListener("click", async (e) => {
+      e.preventDefault();
+
+      const response = await fetch(`/home/friends/c/{{chat_id_friend}}`,{
+        method:"POST",
+        headers:{
+          "Content-Type":"application/json"
+        },
+        body: JSON.stringify({
+          "from":send_btn.value,
+          "message": message.value
+        })
+      });
+
+      const data = await response.json();
+      
+      if(data.success){
+        
+        const message = document.createElement('p');
+        message.innerText = data.message;
+        chat_body.appendChild(message);
+        
+      }else{
+        console.log('puta');
+      }
+
+    });
+   </script>
+</body>
+</html>
