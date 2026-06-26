@@ -25,6 +25,9 @@ def gen_token(value):
 
     return tokenGen
 
+def gen_datetime():
+    newDate = datetime.now(timezone.utc)
+    return newDate
 
 
 
@@ -264,7 +267,8 @@ class Messages(db.Model):
     send_date = db.Column(
             db.DateTime,
             nullable = False,
-            default = datetime.utcnow
+            default=gen_datetime
+            
             )
 
     @classmethod
@@ -278,7 +282,7 @@ class Messages(db.Model):
 
         db.session.add(new_message)
         db.session.commit()
-
+        print("SEND DATE:", new_message.send_date)
         return new_message
 
 class Chats(db.Model):
@@ -394,6 +398,7 @@ def inject():
     user_id = session.get('id')
 
     user = Users.query.filter_by(id_user = user_id).first()
+    active = session.get('active')
 
     if not user:
         return {}
@@ -402,7 +407,8 @@ def inject():
             "mail":user.mail,
             "username":user.username,
             "id":user_id,
-            "picture":user.user_pic
+            "picture":user.user_pic,
+            "active":active
             }
 
 @app.route('/home', methods=["GET", "POST"])
@@ -459,6 +465,7 @@ def register_user():
            session['id'] = user.id_user
            session['username'] = user.username
            session['mail'] =user.mail
+           session['active'] = True
             
            return {
                    "success":True
@@ -518,6 +525,7 @@ def login():
            session['id'] = user.id_user
            session['username'] = user.username
            session['mail'] = user.mail
+           session['active'] = True
            return {
                    "success":True
                    }
@@ -563,10 +571,9 @@ def process_waifu_data():
 @app.route('/home/friends', methods=["GET", "POST"])
 def friends():
     if 'id' not in session:
-        active = False
+        
         return redirect(url_for('login'))
 
-    active = True
 
     my_id=session.get('id')
     solicitudes = Friendships.query.all()
@@ -598,10 +605,10 @@ def friends():
 
       
 
-    
 
 
-    return render_template('friends.html', users= users_show, user_solicitudes = user_solicitudes, user_solicitudes_enviadas = user_solicitudes_enviadas, users_ids_env = users_ids_env, friends_user = friends_user, friends_friends = friends_friends, active = active)
+
+    return render_template('friends.html', users= users_show, user_solicitudes = user_solicitudes, user_solicitudes_enviadas = user_solicitudes_enviadas, users_ids_env = users_ids_env, friends_user = friends_user, friends_friends = friends_friends)
 
 @app.route('/profile-user/changes/userpic', methods=["GET", "POST"])
 def change_picture():
@@ -705,14 +712,21 @@ def priv_chat(chat_id_friend):
     if not user: 
         return {}
     if request.method == "GET":
-         return render_template('chats.html', chat_id_friend=chat_id_friend, friend = friend, user = user)
+         my_id = session.get('id')
+
+         messages_query = Messages.query.filter(
+         ((Messages.id_emisor == my_id) & (Messages.id_receptor == chat_id_friend)) | 
+         ((Messages.id_emisor == chat_id_friend) & (Messages.id_receptor == my_id))).order_by(Messages.send_date.asc()).all()
+                
+
+
+         return render_template('chats.html', chat_id_friend=chat_id_friend, friend = friend, user = user, my_messages = messages_query, timedelta= timedelta)
     data = request.get_json()
 
     from_ms = data.get('from')
     message = data.get('message')
-
+   
     save_send_message = Messages.send(from_ms, chat_id_friend, message)
-
     if save_send_message:
         new_chatt = Chats.new_chat(save_send_message.id_emisor, save_send_message.id_receptor)
         return {

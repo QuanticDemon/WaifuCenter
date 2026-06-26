@@ -6,8 +6,7 @@
   <title>Document</title>
   <link rel="stylesheet" href="{{url_for('static', filename='css/styles.css')}}">
 </head>
-<body>
-   <p>{{chat_id_friend}}</p>
+<body class="body-chat">
    <nav class="nav-bar-chat">
       <div class="user-info">
         <img src="{{url_for('static', filename='uploads_userpic/'+friend.user_pic)}}" alt="">
@@ -27,8 +26,15 @@
    </nav>
 
    <div class="chat-body" id="chat-body">
-      
-   </div>
+    
+     {% for message in my_messages %}
+     <div class="{% if message.id_emisor==id %}user-msg{%else%}friend-msg{%endif%}">
+      <p>{{ message.text_content }}</p>
+      <small>{{ (message.send_date+ timedelta(hours=6)).strftime("%H:%M") }}</small>
+
+     </div>
+             {% endfor %}
+        </div>
 
    <div class="user-input" id="">
 
@@ -42,6 +48,66 @@
     const message = document.getElementById('message');
     const chat_body = document.getElementById('chat-body');
 
+    message.addEventListener('keydown', async (e)=>{
+      
+      if(e.key == "Enter" && message.value != ""){
+
+        
+      const response = await fetch(`/home/friends/c/{{chat_id_friend}}`,{
+        method:"POST",
+        headers:{
+          "Content-Type":"application/json"
+        },
+        body: JSON.stringify({
+          "from":send_btn.value,
+          "message": message.value
+        })
+      });
+
+      const data = await response.json();
+      
+      if(data.success){
+        console.log(data.date);
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'user-msg';
+        
+        const fecha = new Date(data.date);
+
+        const hour = fecha.getHours().toString().padStart(2,"0");
+        const minutes = fecha.getMinutes().toString().padStart(2,"0");
+
+        const newHour = `${hour}:${minutes}`;
+
+        messageDiv.innerHTML = `
+           <p>${data.message}</p>
+           <small>${newHour}</small>
+        `;
+        
+        chat_body.appendChild(messageDiv);
+        message.value = "";
+
+        chat_body.scrollTo({
+          top: chat_body.scrollHeight,
+          behavior:"smooth"
+        });
+
+
+        
+
+             
+      }else{
+        console.log('puta');
+
+      }
+      }
+
+
+      
+    });
+   
+    window.addEventListener("load",()=>{
+      chat_body.scrollTop = chat_body.scrollHeight;
+    });
     send_btn.addEventListener("click", async (e) => {
       e.preventDefault();
 
@@ -59,15 +125,38 @@
       const data = await response.json();
       
       if(data.success){
+        console.log(data.date);
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'user-msg';
         
-        const message = document.createElement('p');
-        message.innerText = data.message;
-        chat_body.appendChild(message);
+        const fecha = new Date(data.date);
+
+        const hour = fecha.getHours().toString().padStart(2,"0");
+        const minutes = fecha.getMinutes().toString().padStart(2,"0");
+
+        const newHour = `${hour}:${minutes}`;
+
+        messageDiv.innerHTML = `
+           <p>${data.message}</p>
+           <small>${newHour}</small>
+        `;
         
+        chat_body.appendChild(messageDiv);
+        message.value = "";
+
+        chat_body.scrollTo({
+          top: chat_body.scrollHeight,
+          behavior:"smooth"
+        });
+
+
+        
+
+             
       }else{
         console.log('puta');
-      }
 
+      }
     });
    </script>
 </body>

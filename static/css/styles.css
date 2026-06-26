@@ -959,6 +959,10 @@ body{
 
 }
 
+.body-chat{
+  display: flex;
+  flex-direction:column;
+}
 .nav-bar-chat{
   background-color: rgba(255,10,90,1);
   position: fixed;
@@ -966,6 +970,7 @@ body{
   width: 100%;
   display: flex;
   height: 50px;
+  z-index: 9999;
 }
 
 .nav-bar-chat .user-info{
@@ -1057,12 +1062,228 @@ body{
   border: none;
   border-radius: 18px;
 }
+.chat-body{
+  display: flex;
+  flex-direction: column;
+  background: black;
 
-.chat-body p{
-  color: black;
-  font-size: 50px;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
+  position: fixed;
+  top: 50px;
+  bottom: 60px;
+  height: 100%;
+    width: 100%;
+  overflow-y: auto;
+  padding-bottom: 100px;
 }
+
+.friend-body{
+  background: rgba(255,10,90,1);
+}
+
+.friend-container{
+  background: transparent;
+  padding: 10px 5px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  
+
+
+}
+
+.friend-chat{
+  display: flex;
+  gap: 20px;
+  font-size: 18px;
+  margin-bottom: 10px;
+  align-items: center;
+  background: white;
+  border-radius: 12px;
+  height: 60px;
+  font-family: fantasy;
+  color: rgba(255,10,90,1);
+  border: none;
+  
+}
+.friend-chat img{
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid red;
+  margin-left: 5px;
+}
+
+.user-msg.not-active{
+  transition: transform 0.5s cubic-bezier(0.77, 0, 0.175, 1);
+}
+.user-msg{
+  align-self: flex-end;
+  background: pink;
+  padding: 10px;
+  border-radius: 10px;
+  margin: 5px;
+  height: 50%;
+  max-height: 60%;
+  width: 30%;
+  max-width: 60%;
+  transform: translateY(-10px);
+  position: relative;
+   animation: aparecer .25s ease-out;
+  
+}
+
+.user-msg small{
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  
+}
+.friend-msg small{
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  
+}
+
+
+
+
+
+
+.friend-msg{
+  align-self: flex-start;
+  background: green;
+  padding: 10px;
+  border-radius: 10px;
+  margin: 5px;
+  height: 50%;
+  max-height: 60%;
+  width: 30%;
+  max-width: 60%;
+  position: relative;
+   animation: aparecer .25s ease-out;
+
+}
+
+@keyframes aparecer {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.user-msg,
+.friend-msg{
+  animation: aparecer .25s ease-out;
+}
+
+
+
+
+
+
+@media screen and (min-width: 1024px){
+  .user::after{
+  content: "";
+  background-color: gray;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  position: absolute;
+  bottom: 10%;
+  left: 5%;
+  z-index: 9999;
+  transform: translate(-17%, -5%);
+}
+
+.user.active::after{
+  content: "";
+  background-color: green;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  position: absolute;
+  bottom: 10%;
+  left: 5%;
+  z-index: 9999;
+  transform: translate(-17%, -5%);
+}
+
+}
+
+@media screen and (max-width:768px){
+  
+.user-msg{
+  align-self: flex-end;
+  background: pink;
+  padding: 10px;
+  border-radius: 10px;
+  margin: 5px;
+  height: 50%;
+  max-height: 60%;
+  width: 60%;
+  max-width: 90%;
+  transform: translateY(-10px);
+  position: relative;
+   animation: aparecer .25s ease-out;
+  
+}
+
+.user-msg small{
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  
+}
+.friend-msg small{
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  
+}
+
+
+
+
+
+
+.friend-msg{
+  align-self: flex-start;
+  background: green;
+  padding: 10px;
+  border-radius: 10px;
+  margin: 5px;
+  height: 50%;
+  max-height: 60%;
+  width: 60%;
+  max-width: 80%;
+  position: relative;
+   animation: aparecer .25s ease-out;
+  margin-bottom: 15px;
+
+}
+
+@keyframes aparecer {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.user-msg,
+.friend-msg{
+  animation: aparecer .25s ease-out;
+}
+
+
+}
+

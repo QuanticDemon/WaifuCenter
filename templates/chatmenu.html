@@ -4,17 +4,33 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title></title>
+  <link rel="stylesheet"href="{{url_for('static', filename='css/styles.css')}}">
 </head>
-<body>
-   {% for chat in chat_user %}
-   <p>{{chat.id_friend}}</p>
-   {% endfor %}
+<body class="friend-body">
+  
 
-   {% for friend_chat, user_chat in chats_user %}
-   <img src="{{url_for('static', filename='uploads_userpic/')+ user_chat.user_pic}}" alt="">
+  <div class="friend-container" id="">
+    
+     {% for friend_chat, user_chat in chats_user %}
+     <button class="friend-chat" id="friend-chat" value="{{user_chat.id_user}}">
+     <img src="{{url_for('static', filename='uploads_userpic/')+ user_chat.user_pic}}" alt="">
     <p>{{user_chat.username}}</p>
     <p>{{friend_chat.status}}</p>
-  {% endfor %}
+  
+    
+   </button>
+     {% endfor %}
 
+  </div>
+  <script>
+    const user_chats = document.querySelectorAll('.friend-chat');
+
+    user_chats.forEach((user_chat) => {
+      user_chat.addEventListener("click", (e) => {
+        window.location.href = `/home/friends/c/${user_chat.value}`;
+      });
+
+    });
+  </script>
 </body>
 </html>
